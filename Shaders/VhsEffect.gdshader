@@ -1,32 +1,27 @@
-// https://www.shadertoy.com/view/MdffD7
-// Fork of FMS_Cat's VCR distortion shader
-
 shader_type canvas_item;
-
-// TODO: Add uniforms for tape crease discoloration and image jiggle
 
 uniform sampler2D screen_texture: hint_screen_texture, filter_linear_mipmap, repeat_disable;
 
-uniform vec2 vhs_resolution = vec2(320.0, 240.0);
+uniform vec2 vhs_resolution = vec2(1500.0, 1500.0);
 
-uniform int samples = 2;
+uniform int samples = 3;
 uniform float crease_noise: hint_range(0.0, 2.0, 0.1) = 1.0;
 uniform float crease_opacity: hint_range(0.0, 1.0, 0.1) = 0.5;
-uniform float filter_intensity: hint_range(0.0, 1.0, 0.1) = 0.1;
+uniform float filter_intensity: hint_range(0.0, 1.0, 0.1) = 0.0;
 
 group_uniforms tape_crease;
 uniform float tape_crease_smear: hint_range(0.0, 2.0, 0.1) = 0.2;
-uniform float tape_crease_intensity: hint_range(0.0, 1.0, 0.1) = 0.2;
+uniform float tape_crease_intensity: hint_range(0.0, 1.0, 0.1) = 0.1;
 uniform float tape_crease_jitter: hint_range(0.0, 1.0, 0.01) = 0.10;
 uniform float tape_crease_speed: hint_range(-2.0, 2.0, 0.1) = 0.5;
-uniform float tape_crease_discoloration: hint_range(0.0, 2.0, 0.1) = 1.0;
+uniform float tape_crease_discoloration: hint_range(0.0, 2.0, 0.1) = 0.0;
 
 group_uniforms bottom_border;
-uniform float bottom_border_thickness: hint_range(0.0,32.0, 0.1) = 6.0;
+uniform float bottom_border_thickness: hint_range(0.0,32.0, 0.1) = 3.0;
 uniform float bottom_border_jitter: hint_range(0.0, 24.0, 0.5) = 6.0;
 
 group_uniforms noise;
-uniform float noise_intensity: hint_range(0.0, 1.0, 0.1) = 0.1;
+uniform float noise_intensity: hint_range(0.0, 1.0, 0.1) = 0.2;
 uniform sampler2D noise_texture: filter_linear_mipmap, repeat_enable;
 
 float v2random(vec2 uv) {

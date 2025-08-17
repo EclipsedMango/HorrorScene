@@ -1,0 +1,113 @@
+[gd_scene load_steps=12 format=3 uid="uid://d2oyjj2d3bk2b"]
+
+[ext_resource type="Script" uid="uid://dmtkdwpne7rwi" path="res://Scripts/PlayerMovement.gd" id="1_dewec"]
+[ext_resource type="Shader" uid="uid://b87hwtqukjhwg" path="res://Shaders/CameraEffect.gdshader" id="2_5ixxa"]
+[ext_resource type="Shader" uid="uid://c23ebcyy3wo5f" path="res://Shaders/VhsEffect.gdshader" id="3_nn08x"]
+[ext_resource type="Shader" uid="uid://c8lpvur0rfpsy" path="res://Shaders/FishEyeEffect.gdshader" id="4_52ee3"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wwrpy"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_dewec"]
+dof_blur_far_enabled = true
+dof_blur_far_transition = 4.0
+dof_blur_near_enabled = true
+dof_blur_near_distance = 1.0
+dof_blur_amount = 0.2
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rdibx"]
+shader = ExtResource("2_5ixxa")
+shader_parameter/RedOffset = 0.003
+shader_parameter/GreenOffset = 0.00100005
+shader_parameter/BlueOffset = 4.75e-08
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_5m5cn"]
+frequency = 0.11
+fractal_type = 0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_eayxn"]
+width = 2000
+height = 2000
+seamless_blend_skirt = 0.0
+noise = SubResource("FastNoiseLite_5m5cn")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5ak4j"]
+shader = ExtResource("3_nn08x")
+shader_parameter/vhs_resolution = Vector2(1500, 1500)
+shader_parameter/samples = 3
+shader_parameter/crease_noise = 1.0
+shader_parameter/crease_opacity = 0.5
+shader_parameter/filter_intensity = 0.0
+shader_parameter/tape_crease_smear = 0.2
+shader_parameter/tape_crease_intensity = 0.1
+shader_parameter/tape_crease_jitter = 0.1
+shader_parameter/tape_crease_speed = 0.5
+shader_parameter/tape_crease_discoloration = 0.0
+shader_parameter/bottom_border_thickness = 3.0
+shader_parameter/bottom_border_jitter = 6.0
+shader_parameter/noise_intensity = 0.2
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_eayxn")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5ff8s"]
+shader = ExtResource("4_52ee3")
+shader_parameter/effect_amount = 1.75
+
+[node name="Player" type="CharacterBody3D"]
+transform = Transform3D(0.499999, 0, 0, 0, 0.5, 0, 0, 0, 0.499999, 0, 0, 0)
+script = ExtResource("1_dewec")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_wwrpy")
+
+[node name="Head" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.566768, 0)
+attributes = SubResource("CameraAttributesPractical_dewec")
+
+[node name="PlayerTorch" type="SpotLight3D" parent="Head"]
+light_color = Color(1, 1, 0.839216, 1)
+light_volumetric_fog_energy = 0.0
+shadow_enabled = true
+shadow_blur = 5.545
+distance_fade_begin = 2.0
+distance_fade_shadow = 1204.84
+distance_fade_length = 745.73
+spot_range = 7.0
+spot_angle = 41.918
+spot_angle_attenuation = 4.2871
+
+[node name="ScreenEffects" type="Node3D" parent="."]
+
+[node name="ChromaticVignette" type="CanvasLayer" parent="ScreenEffects"]
+
+[node name="ColorRect" type="ColorRect" parent="ScreenEffects/ChromaticVignette"]
+material = SubResource("ShaderMaterial_rdibx")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Glitch" type="CanvasLayer" parent="ScreenEffects"]
+
+[node name="ColorRect" type="ColorRect" parent="ScreenEffects/Glitch"]
+material = SubResource("ShaderMaterial_5ak4j")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FishEye" type="CanvasLayer" parent="ScreenEffects"]
+
+[node name="ColorRect2" type="ColorRect" parent="ScreenEffects/FishEye"]
+material = SubResource("ShaderMaterial_5ff8s")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DebugInfo" type="CanvasLayer" parent="ScreenEffects"]
+
+[node name="DebugInfo" type="Label" parent="ScreenEffects/DebugInfo"]
+offset_right = 40.0
+offset_bottom = 23.0

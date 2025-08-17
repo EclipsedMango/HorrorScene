@@ -1,0 +1,50 @@
+[gd_scene load_steps=14 format=3 uid="uid://yro3yrnh0ajp"]
+
+[ext_resource type="Script" uid="uid://bjlidegqcx7dt" path="res://Scripts/MonsterAI/Agent.gd" id="1_afi16"]
+[ext_resource type="Script" uid="uid://6t7lbcofcrje" path="res://Scripts/MonsterAI/UtilityAI.gd" id="2_1jl7r"]
+[ext_resource type="Script" uid="uid://csuukt72glcdj" path="res://Scripts/MonsterAI/Behaviours/Behaviour.gd" id="2_5etb8"]
+[ext_resource type="Script" uid="uid://1emlxnrs343c" path="res://Scripts/MonsterAI/Behaviours/FollowBehaviour.gd" id="3_5hd4k"]
+[ext_resource type="Script" uid="uid://4i2305xk3vpx" path="res://Scripts/MonsterAI/Behaviours/WanderBehaviour.gd" id="4_n5f4u"]
+[ext_resource type="Script" uid="uid://bxjofdfch015u" path="res://Scripts/MonsterAI/PathAgent.gd" id="5_aonqa"]
+
+[sub_resource type="Resource" id="Resource_aonqa"]
+script = ExtResource("3_5hd4k")
+metadata/_custom_type_script = "uid://1emlxnrs343c"
+
+[sub_resource type="Resource" id="Resource_3oq1m"]
+script = ExtResource("4_n5f4u")
+metadata/_custom_type_script = "uid://4i2305xk3vpx"
+
+[sub_resource type="Resource" id="Resource_5etb8"]
+script = ExtResource("2_1jl7r")
+behaviours = Array[ExtResource("2_5etb8")]([SubResource("Resource_aonqa"), SubResource("Resource_3oq1m")])
+metadata/_custom_type_script = "uid://6t7lbcofcrje"
+
+[sub_resource type="Resource" id="Resource_n5f4u"]
+script = ExtResource("5_aonqa")
+speed = 1.5
+metadata/_custom_type_script = "uid://bxjofdfch015u"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n5f4u"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_1jl7r"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_afi16"]
+
+[node name="MonsterNPC" type="CharacterBody3D"]
+script = ExtResource("1_afi16")
+current_behaviour = SubResource("Resource_5etb8")
+path_agent = SubResource("Resource_n5f4u")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_n5f4u")
+mesh = SubResource("CapsuleMesh_1jl7r")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_afi16")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+debug_enabled = true

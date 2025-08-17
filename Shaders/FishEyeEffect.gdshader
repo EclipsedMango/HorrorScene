@@ -1,56 +1,46 @@
-// Converted from https://www.shadertoy.com/view/td2GzW
 shader_type canvas_item;
 uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
 
 // Anti fish eye (negative amount) / fish eye (positive)
-uniform float effect_amount : hint_range(-2.5, 2.5) = 1.0;
+uniform float effect_amount : hint_range(-2.5, 2.5) = 1.75;
 
 void fragment() {
-	// glsl -> godot shader
-	vec2 iResolution = 1.0 / SCREEN_PIXEL_SIZE;
+	vec2 resolution = 1.0 / SCREEN_PIXEL_SIZE;
 	vec4 fragCoord = FRAGCOORD;
 
-	//normalized coords
-	vec2 p = fragCoord.xy / iResolution.x;
+	// Normalized coords
+	vec2 ndc = fragCoord.xy / resolution.x;
+	float aspect = resolution.x / resolution.y;
 
-	//screen proroption
-	float prop = iResolution.x / iResolution.y;
-
-	//center coords
-	vec2 m = vec2(0.5, 0.5 / prop);
-
-	//vector from center to current fragment
-	vec2 d = p - m;
-
-	// distance of pixel from center
-	float r = sqrt(dot(d, d));
-
+	vec2 centeredAspect = vec2(0.5, 0.5 / aspect);
+	vec2 d = ndc - centeredAspect;
+	float h = sqrt(dot(d, d));
 	float power = effect_amount;
 
 	//radius of 1:1 effect
 	float bind;
 
-	//stick to borders
-	if (power > 0.0)
-		bind = sqrt(dot(m, m));
-	else {
-		if (prop < 1.0)
-    		bind = m.x;
-    	else
-        	bind = m.y;
+	if (power > 0.0) {
+		bind = sqrt(dot(centeredAspect, centeredAspect));
+	} else {
+		if (aspect < 1.0) {
+			bind = centeredAspect.x;
+		} else {
+			bind = centeredAspect.y;
+		}
 	}
 
 	vec2 uv;
-	//fisheye
-	if (power > 0.0)
-		uv = m + normalize(d) * tan(r * power) * bind / tan( bind * power);
-	//antifisheye
-	else if (power < 0.0)
-		uv = m + normalize(d) * atan(r * -power * 10.0) * bind / atan(-power * bind * 10.0);
-	//no effect for power = 1.0
-	else
-		uv = p;
-    uv.y *= prop;
+	if (power > 0.0) {
+		uv = centeredAspect + normalize(d) * tan(h * power) * bind / tan( bind * power);
+	} else if (power < 0.0) {
+		uv = centeredAspect + normalize(d) * atan(h * -power * 10.0) * bind / atan(-power * bind * 10.0);
+	} else {
+		uv = ndc;
+	}
+	uv.y *= aspect;
+
+	vec4 fishScreenTexture = texture(SCREEN_TEXTURE, uv);
 
 	vec3 col = texture(SCREEN_TEXTURE, uv).rgb;
 

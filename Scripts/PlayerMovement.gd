@@ -26,6 +26,7 @@ var current_fov: float = 0
 var is_screen_shaking: bool = false
 var is_sprinting: bool = false
 var stamina_check: bool = false
+var capture_mouse: bool = false
 
 var wanted_dir: Vector2 = Vector2.ZERO
 var previous_rotation: Vector3 = Vector3.ZERO
@@ -58,9 +59,17 @@ func _process(delta: float) -> void:
 		walk_time += delta
 		head.rotation.z += noise.get_noise_1d(walk_time * 75.0) * 0.1
 	
+	if Input.is_action_just_pressed("escape"):
+		capture_mouse = !capture_mouse
+		
+		if capture_mouse:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		else:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	
 	# Adds small delay between mouse movement and camera reacting
 	var current_rotation: Vector3 = Vector3(head.rotation.x, rotation.y, head.rotation.z)
-	get_tree().create_timer(0.075).timeout.connect(func(): previous_rotation = current_rotation)
+	get_tree().create_timer(0.05).timeout.connect(func(): previous_rotation = current_rotation)
 	get_tree().create_timer(0.1).timeout.connect(func(): player_torch.global_rotation = current_rotation)
 
 
