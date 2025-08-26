@@ -1,0 +1,60 @@
+[gd_scene load_steps=5 format=3 uid="uid://sngm0uqfkv06"]
+
+[ext_resource type="Texture2D" uid="uid://kbevcyv5t7g7" path="res://Images/CheckeredPattern.png" id="1_nqjuk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mdeio"]
+albedo_color = Color(0.408329, 0.408329, 0.408329, 1)
+albedo_texture = ExtResource("1_nqjuk")
+uv1_scale = Vector3(10, 10, 10)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q6l42"]
+albedo_color = Color(0.462291, 0.462291, 0.462291, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nqjuk"]
+size = Vector3(8.05823, 4.2291, 8.02026)
+
+[node name="TestRoom" type="Node3D"]
+
+[node name="Bounds" type="Node3D" parent="."]
+
+[node name="Ground" type="CSGBox3D" parent="Bounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.144961, 0)
+use_collision = true
+size = Vector3(8, 0.299922, 8)
+material = SubResource("StandardMaterial3D_mdeio")
+
+[node name="WallNorth" type="CSGBox3D" parent="Bounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0334015, 1.75, -3.87541)
+use_collision = true
+size = Vector3(8.19661, 3.5, 0.233862)
+material = SubResource("StandardMaterial3D_q6l42")
+
+[node name="WallNorth2" type="CSGBox3D" parent="Bounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0283847, 1.75, 3.86538)
+use_collision = true
+size = Vector3(8.07304, 3.5, 0.233862)
+material = SubResource("StandardMaterial3D_q6l42")
+
+[node name="WallNorth3" type="CSGBox3D" parent="Bounds"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -3.88667, 1.75, 0.0687072)
+use_collision = true
+size = Vector3(8.07304, 3.5, 0.233862)
+material = SubResource("StandardMaterial3D_q6l42")
+
+[node name="WallNorth4" type="CSGBox3D" parent="Bounds"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 3.9062, 1.75, 0.0687072)
+use_collision = true
+size = Vector3(8.07304, 3.5, 0.233862)
+material = SubResource("StandardMaterial3D_q6l42")
+
+[node name="Roof" type="CSGBox3D" parent="Bounds"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.59048, 0)
+use_collision = true
+size = Vector3(8, 0.191, 8)
+material = SubResource("StandardMaterial3D_q6l42")
+
+[node name="RoomDetectionArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RoomDetectionArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0188599, 1.61455, 0.00939941)
+shape = SubResource("BoxShape3D_nqjuk")

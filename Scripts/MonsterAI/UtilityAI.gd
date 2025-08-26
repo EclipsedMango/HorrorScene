@@ -25,7 +25,6 @@ func update(agent: CharacterBody3D, delta_time: float) -> void:
 	
 	for behaviour in behaviours:
 		var eval: float = behaviour.evaluate(agent)
-		print(eval)
 		
 		if eval > best_eval:
 			best_eval = eval

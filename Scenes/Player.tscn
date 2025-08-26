@@ -1,9 +1,14 @@
-[gd_scene load_steps=12 format=3 uid="uid://d2oyjj2d3bk2b"]
+[gd_scene load_steps=19 format=3 uid="uid://d2oyjj2d3bk2b"]
 
 [ext_resource type="Script" uid="uid://dmtkdwpne7rwi" path="res://Scripts/PlayerMovement.gd" id="1_dewec"]
-[ext_resource type="Shader" uid="uid://b87hwtqukjhwg" path="res://Shaders/CameraEffect.gdshader" id="2_5ixxa"]
-[ext_resource type="Shader" uid="uid://c23ebcyy3wo5f" path="res://Shaders/VhsEffect.gdshader" id="3_nn08x"]
-[ext_resource type="Shader" uid="uid://c8lpvur0rfpsy" path="res://Shaders/FishEyeEffect.gdshader" id="4_52ee3"]
+[ext_resource type="Shader" uid="uid://b87hwtqukjhwg" path="res://Shaders/Player/CameraEffect.gdshader" id="2_5ixxa"]
+[ext_resource type="Shader" uid="uid://c23ebcyy3wo5f" path="res://Shaders/Player/VhsEffect.gdshader" id="3_nn08x"]
+[ext_resource type="Shader" uid="uid://c8lpvur0rfpsy" path="res://Shaders/Player/FishEyeEffect.gdshader" id="4_52ee3"]
+[ext_resource type="Script" uid="uid://2utrou1krv5t" path="res://Scripts/Inventory/CompartmentUI.gd" id="5_5ixxa"]
+[ext_resource type="Script" uid="uid://dawk1dcnjggnh" path="res://Scripts/Inventory/Items/Item.gd" id="6_52ee3"]
+[ext_resource type="Texture2D" uid="uid://chw2sl3s8qj2h" path="res://Images/icon.svg" id="7_52ee3"]
+[ext_resource type="Texture2D" uid="uid://kbevcyv5t7g7" path="res://Images/CheckeredPattern.png" id="8_bhhdu"]
+[ext_resource type="PackedScene" uid="uid://bcqaucxjnurud" path="res://Bag.tscn" id="9_megsn"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wwrpy"]
 
@@ -51,18 +56,42 @@ shader_parameter/noise_texture = SubResource("NoiseTexture2D_eayxn")
 shader = ExtResource("4_52ee3")
 shader_parameter/effect_amount = 1.75
 
+[sub_resource type="Resource" id="Resource_bhhdu"]
+script = ExtResource("6_52ee3")
+item_name = "New Item"
+description = ""
+texture = ExtResource("7_52ee3")
+size = Vector2i(2, 2)
+stackable = false
+max_stack_size = 1
+metadata/_custom_type_script = "uid://dawk1dcnjggnh"
+
+[sub_resource type="Resource" id="Resource_megsn"]
+script = ExtResource("6_52ee3")
+item_name = "New Item"
+description = ""
+texture = ExtResource("8_bhhdu")
+size = Vector2i(1, 1)
+stackable = false
+max_stack_size = 1
+metadata/_custom_type_script = "uid://dawk1dcnjggnh"
+
 [node name="Player" type="CharacterBody3D"]
 transform = Transform3D(0.499999, 0, 0, 0, 0.5, 0, 0, 0, 0.499999, 0, 0, 0)
 script = ExtResource("1_dewec")
+bag_max_rotation_degrees = 75.0
+bag_rotation_speed = 10.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_wwrpy")
 
 [node name="Head" type="Camera3D" parent="."]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.566768, 0)
 attributes = SubResource("CameraAttributesPractical_dewec")
 
 [node name="PlayerTorch" type="SpotLight3D" parent="Head"]
+unique_name_in_owner = true
 light_color = Color(1, 1, 0.839216, 1)
 light_volumetric_fog_energy = 0.0
 shadow_enabled = true
@@ -74,11 +103,25 @@ spot_range = 7.0
 spot_angle = 41.918
 spot_angle_attenuation = 4.2871
 
-[node name="ScreenEffects" type="Node3D" parent="."]
+[node name="Bag" parent="Head" instance=ExtResource("9_megsn")]
+unique_name_in_owner = true
+transform = Transform3D(0.499999, 0, 0, 0, 0.5, 0, 0, 0, 0.499999, 0, -0.0604898, -1.21388)
+visible = false
 
-[node name="ChromaticVignette" type="CanvasLayer" parent="ScreenEffects"]
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="ScreenEffects/ChromaticVignette"]
+[node name="ScreenEffects" type="Control" parent="UI"]
+anchors_preset = 0
+
+[node name="ChromaticVignette" type="CanvasLayer" parent="UI/ScreenEffects"]
+
+[node name="ColorRect" type="ColorRect" parent="UI/ScreenEffects/ChromaticVignette"]
 material = SubResource("ShaderMaterial_rdibx")
 anchors_preset = 15
 anchor_right = 1.0
@@ -86,9 +129,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Glitch" type="CanvasLayer" parent="ScreenEffects"]
+[node name="Glitch" type="CanvasLayer" parent="UI/ScreenEffects"]
 
-[node name="ColorRect" type="ColorRect" parent="ScreenEffects/Glitch"]
+[node name="ColorRect" type="ColorRect" parent="UI/ScreenEffects/Glitch"]
 material = SubResource("ShaderMaterial_5ak4j")
 anchors_preset = 15
 anchor_right = 1.0
@@ -96,9 +139,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="FishEye" type="CanvasLayer" parent="ScreenEffects"]
+[node name="FishEye" type="CanvasLayer" parent="UI/ScreenEffects"]
 
-[node name="ColorRect2" type="ColorRect" parent="ScreenEffects/FishEye"]
+[node name="ColorRect2" type="ColorRect" parent="UI/ScreenEffects/FishEye"]
 material = SubResource("ShaderMaterial_5ff8s")
 anchors_preset = 15
 anchor_right = 1.0
@@ -106,8 +149,47 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="DebugInfo" type="CanvasLayer" parent="ScreenEffects"]
+[node name="Inventory" type="Control" parent="UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="DebugInfo" type="Label" parent="ScreenEffects/DebugInfo"]
+[node name="Inventory" type="CanvasLayer" parent="UI/Inventory"]
+unique_name_in_owner = true
+layer = 2
+
+[node name="Compartment" type="GridContainer" parent="UI/Inventory/Inventory"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -306.0
+offset_top = -306.0
+offset_right = 306.0
+offset_bottom = 306.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+script = ExtResource("5_5ixxa")
+compartment_size = Vector2i(4, 4)
+test_item = SubResource("Resource_bhhdu")
+test_item2 = SubResource("Resource_megsn")
+
+[node name="Hud" type="Control" parent="UI"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="DebugInfo" type="CanvasLayer" parent="UI/Hud"]
+layer = 2
+
+[node name="DebugInfo" type="Label" parent="UI/Hud/DebugInfo"]
+unique_name_in_owner = true
 offset_right = 40.0
 offset_bottom = 23.0

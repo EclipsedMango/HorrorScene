@@ -8,25 +8,31 @@ const LOOK_LIMIT: float = PI / 2
 @export var sprint_multiplier: float = 2.25
 @export var max_stamina: float = 15
 @export var stamina: float = 15
-@export var stamina_regen_amount: float = 2
+@export var stamina_regen_amount: float = 4
 @export var stamina_regen_wait: float = 1.5
 
 @export_group("Camera")
-@export var MOUSE_SENSITIVITY: float = 0.001
+@export var mouse_sensitivity: float = 0.001
 @export var zoom_max: float = 50
 @export var zoom_min: float = 75
 @export var sprinting_fov_amount: float = 10
 
-@onready var head: Camera3D = $Head
-@onready var player_torch: SpotLight3D = $Head/PlayerTorch
-@onready var debug_info: Label = $ScreenEffects/DebugInfo/DebugInfo
+@export_group("Inventory")
+@export var bag_max_rotation_degrees: float = 45.0
+@export var bag_rotation_speed: float = 5.0
+
+@onready var head: Camera3D = %Head
+@onready var player_torch: SpotLight3D = %PlayerTorch
+@onready var debug_info: Label = %DebugInfo
+@onready var inventory: CanvasLayer = %Inventory
+@onready var bag: Node3D = %Bag
 
 var walk_time: float = 0
 var current_fov: float = 0
 var is_screen_shaking: bool = false
 var is_sprinting: bool = false
 var stamina_check: bool = false
-var capture_mouse: bool = false
+var inventory_open: bool = false
 
 var wanted_dir: Vector2 = Vector2.ZERO
 var previous_rotation: Vector3 = Vector3.ZERO
@@ -42,6 +48,8 @@ func _ready() -> void:
 	
 	player_torch.visible = false
 	stamina_check = false
+	inventory.visible = false
+	bag.visible = false
 
 
 func _process(delta: float) -> void:
@@ -59,13 +67,19 @@ func _process(delta: float) -> void:
 		walk_time += delta
 		head.rotation.z += noise.get_noise_1d(walk_time * 75.0) * 0.1
 	
+	handle_inventory_bag_rotation(delta)
+	
 	if Input.is_action_just_pressed("escape"):
-		capture_mouse = !capture_mouse
+		inventory_open = !inventory_open
 		
-		if capture_mouse:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		else:
+		if inventory_open:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			bag.visible = true
+			inventory.visible = true
+		else:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			bag.visible = false
+			inventory.visible = false
 	
 	# Adds small delay between mouse movement and camera reacting
 	var current_rotation: Vector3 = Vector3(head.rotation.x, rotation.y, head.rotation.z)
@@ -97,13 +111,13 @@ func _physics_process(delta: float) -> void:
 		# Stamina Regen
 		if stamina_check == true:
 			stamina += stamina_regen_amount * delta
-
+	
 	# FOV increase while sprinting
 	if is_sprinting:
 		head.fov = move_toward(head.fov, current_fov + sprinting_fov_amount, 40 * delta)
 	else:
 		head.fov = move_toward(head.fov, current_fov, 40 * delta)
-
+	
 	var input_dir := Input.get_vector("a", "d", "w", "s")
 	var direction := (Vector3(input_dir.x, 0, input_dir.y).rotated(Vector3.UP, wanted_dir.x)).normalized()
 	
@@ -120,27 +134,48 @@ func _physics_process(delta: float) -> void:
 	else:
 		is_screen_shaking = false
 		vel = vel.move_toward(Vector2.ZERO, 30 * delta)
-
+	
 	velocity.x = vel.x
 	velocity.z = vel.y
-
+	
 	if Input.is_action_just_pressed("f"):
 		player_torch.visible = !player_torch.visible
-
+	
 	# FOV zoom to mimic zooming on a camera
 	if Input.is_action_just_pressed("mouse_up") && current_fov > zoom_max:
 		current_fov -= 1
 	elif Input.is_action_just_pressed("mouse_down") && current_fov < zoom_min:
 		current_fov += 1
-
+	
 	# Important testing info
 	debug_info.text = str("Speed: ", vel.length(), "\nStamina: ", stamina, "\nVelocity: ", velocity, "\nPos: ", global_position, "\nFOV: ", head.fov, "\nCamRotation: ", head.rotation)
-
+	
 	move_and_slide()
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		wanted_dir.x -= event.relative.x * MOUSE_SENSITIVITY
-		wanted_dir.y = clampf(wanted_dir.y - (event.relative.y * MOUSE_SENSITIVITY), -LOOK_LIMIT, LOOK_LIMIT)
-		velocity = velocity.rotated(Vector3.UP, -event.relative.x * MOUSE_SENSITIVITY)
+	if event is InputEventMouseMotion && !inventory_open:
+		wanted_dir.x -= event.relative.x * mouse_sensitivity
+		wanted_dir.y = clampf(wanted_dir.y - (event.relative.y * mouse_sensitivity), -LOOK_LIMIT, LOOK_LIMIT)
+		velocity = velocity.rotated(Vector3.UP, -event.relative.x * mouse_sensitivity)
+
+
+func handle_inventory_bag_rotation(delta: float) -> void:
+	if inventory_open:
+		var vp: Viewport = get_viewport()
+		var vp_size: Vector2 = Vector2(vp.size)
+		var mouse_pos: Vector2 = vp.get_mouse_position()
+		
+		var nx: float = (mouse_pos.x / vp_size.x) * 2.0 - 1.0
+		var ny: float = (mouse_pos.y / vp_size.y) * 2.0 - 1.0
+		
+		var sensitivity: float = 2.0  
+		
+		var target_y_deg: float = clamp(-nx * sensitivity * bag_max_rotation_degrees, -bag_max_rotation_degrees, bag_max_rotation_degrees)
+		var target_x_deg: float = clamp(-ny * sensitivity * bag_max_rotation_degrees, -bag_max_rotation_degrees, bag_max_rotation_degrees)
+		
+		bag.rotation_degrees.y = lerp(bag.rotation_degrees.y, target_y_deg, delta * bag_rotation_speed)
+		bag.rotation_degrees.x = lerp(bag.rotation_degrees.x, target_x_deg, delta * bag_rotation_speed)
+	else:
+		bag.rotation_degrees.y = lerp(bag.rotation_degrees.y, 0.0, delta * bag_rotation_speed)
+		bag.rotation_degrees.x = lerp(bag.rotation_degrees.x, 0.0, delta * bag_rotation_speed)
