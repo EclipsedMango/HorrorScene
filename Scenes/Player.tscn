@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://d2oyjj2d3bk2b"]
+[gd_scene load_steps=20 format=3 uid="uid://d2oyjj2d3bk2b"]
 
 [ext_resource type="Script" uid="uid://dmtkdwpne7rwi" path="res://Scripts/PlayerMovement.gd" id="1_dewec"]
 [ext_resource type="Shader" uid="uid://b87hwtqukjhwg" path="res://Shaders/Player/CameraEffect.gdshader" id="2_5ixxa"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://chw2sl3s8qj2h" path="res://Images/icon.svg" id="7_52ee3"]
 [ext_resource type="Texture2D" uid="uid://kbevcyv5t7g7" path="res://Images/CheckeredPattern.png" id="8_bhhdu"]
 [ext_resource type="PackedScene" uid="uid://bcqaucxjnurud" path="res://Bag.tscn" id="9_megsn"]
+[ext_resource type="Script" uid="uid://frsbljmuu5p5" path="res://Scripts/BagViewport.gd" id="10_yoq75"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wwrpy"]
 
@@ -103,11 +104,6 @@ spot_range = 7.0
 spot_angle = 41.918
 spot_angle_attenuation = 4.2871
 
-[node name="Bag" parent="Head" instance=ExtResource("9_megsn")]
-unique_name_in_owner = true
-transform = Transform3D(0.499999, 0, 0, 0, 0.5, 0, 0, 0, 0.499999, 0, -0.0604898, -1.21388)
-visible = false
-
 [node name="UI" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
@@ -193,3 +189,39 @@ layer = 2
 unique_name_in_owner = true
 offset_right = 40.0
 offset_bottom = 23.0
+
+[node name="BagViewport" type="SubViewportContainer" parent="UI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewport" type="SubViewport" parent="UI/BagViewport"]
+unique_name_in_owner = true
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+script = ExtResource("10_yoq75")
+
+[node name="Camera3D" type="Camera3D" parent="UI/BagViewport/SubViewport"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -23.8734, 0)
+
+[node name="Bag" parent="UI/BagViewport/SubViewport/Camera3D" instance=ExtResource("9_megsn")]
+unique_name_in_owner = true
+transform = Transform3D(0.499999, 0, 0, 0, 0.5, 0, 0, 0, 0.499999, 0, -0.0630875, -1.21388)
+
+[node name="BagTorch" type="SpotLight3D" parent="UI/BagViewport/SubViewport/Camera3D"]
+unique_name_in_owner = true
+light_color = Color(1, 1, 0.839216, 1)
+light_volumetric_fog_energy = 0.0
+shadow_enabled = true
+shadow_blur = 5.545
+distance_fade_begin = 2.0
+distance_fade_shadow = 1204.84
+distance_fade_length = 745.73
+spot_range = 7.0
+spot_angle = 41.918
+spot_angle_attenuation = 4.2871

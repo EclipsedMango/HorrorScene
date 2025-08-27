@@ -22,7 +22,9 @@ const LOOK_LIMIT: float = PI / 2
 @export var bag_rotation_speed: float = 5.0
 
 @onready var head: Camera3D = %Head
+@onready var bag_cam: Camera3D = %Camera3D
 @onready var player_torch: SpotLight3D = %PlayerTorch
+@onready var bag_torch: SpotLight3D = %BagTorch
 @onready var debug_info: Label = %DebugInfo
 @onready var inventory: CanvasLayer = %Inventory
 @onready var bag: Node3D = %Bag
@@ -39,6 +41,11 @@ var previous_rotation: Vector3 = Vector3.ZERO
 
 var noise: Noise = FastNoiseLite.new()
 
+var hover_mesh: MeshInstance3D = null
+var hover_material: StandardMaterial3D = preload("res://Shaders/HightLight2.tres")
+var original_mat: StandardMaterial3D = preload("res://Shaders/DefaultMat.tres")
+
+var previous_hover_mesh: MeshInstance3D = null  # Keep track of last hovered mesh
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -47,6 +54,7 @@ func _ready() -> void:
 	current_fov = head.fov
 	
 	player_torch.visible = false
+	bag_torch.visible = false
 	stamina_check = false
 	inventory.visible = false
 	bag.visible = false
@@ -76,10 +84,62 @@ func _process(delta: float) -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			bag.visible = true
 			inventory.visible = true
+			
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 			bag.visible = false
 			inventory.visible = false
+	
+	if inventory_open:
+		var mouse_pos: Vector2 = get_viewport().get_mouse_position()
+		var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+		
+		var ray_origin: Vector3 = bag_cam.project_ray_origin(mouse_pos)
+		var ray_end: Vector3 = ray_origin + bag_cam.project_ray_normal(mouse_pos) * 100.0
+		
+		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
+		query.collide_with_areas = true
+		
+		var result: Dictionary = space_state.intersect_ray(query)
+		
+		if result:
+			var collider: Area3D = result.collider
+			if collider.get_child_count() < 2:
+				return  # Safety check
+			
+			var mesh: MeshInstance3D = collider.get_child(1)
+			
+			# If we're hovering a new mesh, reset the previous one
+			if mesh != previous_hover_mesh:
+				if previous_hover_mesh:
+					# Reset the old mesh's material
+					previous_hover_mesh.set_surface_override_material(0, original_mat)
+				
+				# Store the new mesh and its original material
+				previous_hover_mesh = mesh
+				original_mat = mesh.get_surface_override_material(0)
+				
+				# Apply hover material
+				mesh.set_surface_override_material(0, hover_material.duplicate())
+			
+			print("Global rotation of collider: ", result.collider.global_transform.basis.get_euler())
+			
+			# Debug match
+			match collider.name:
+				"FrontCompartment":
+					print("Hit Front")
+				"BackCompartment":
+					print("Hit Back")
+				"LeftCompartment":
+					print("Hit Left")
+				"RightCompartment":
+					print("Hit Right")
+		else:
+			# Nothing hit, reset previous mesh if needed
+			if previous_hover_mesh:
+				previous_hover_mesh.set_surface_override_material(0, original_mat)
+				previous_hover_mesh = null
+				original_mat = null
 	
 	# Adds small delay between mouse movement and camera reacting
 	var current_rotation: Vector3 = Vector3(head.rotation.x, rotation.y, head.rotation.z)
@@ -140,6 +200,7 @@ func _physics_process(delta: float) -> void:
 	
 	if Input.is_action_just_pressed("f"):
 		player_torch.visible = !player_torch.visible
+		bag_torch.visible = !bag_torch.visible
 	
 	# FOV zoom to mimic zooming on a camera
 	if Input.is_action_just_pressed("mouse_up") && current_fov > zoom_max:
@@ -161,21 +222,25 @@ func _input(event: InputEvent) -> void:
 
 
 func handle_inventory_bag_rotation(delta: float) -> void:
-	if inventory_open:
-		var vp: Viewport = get_viewport()
-		var vp_size: Vector2 = Vector2(vp.size)
-		var mouse_pos: Vector2 = vp.get_mouse_position()
-		
-		var nx: float = (mouse_pos.x / vp_size.x) * 2.0 - 1.0
-		var ny: float = (mouse_pos.y / vp_size.y) * 2.0 - 1.0
-		
-		var sensitivity: float = 2.0  
-		
-		var target_y_deg: float = clamp(-nx * sensitivity * bag_max_rotation_degrees, -bag_max_rotation_degrees, bag_max_rotation_degrees)
-		var target_x_deg: float = clamp(-ny * sensitivity * bag_max_rotation_degrees, -bag_max_rotation_degrees, bag_max_rotation_degrees)
-		
-		bag.rotation_degrees.y = lerp(bag.rotation_degrees.y, target_y_deg, delta * bag_rotation_speed)
-		bag.rotation_degrees.x = lerp(bag.rotation_degrees.x, target_x_deg, delta * bag_rotation_speed)
-	else:
+	if !inventory_open:
 		bag.rotation_degrees.y = lerp(bag.rotation_degrees.y, 0.0, delta * bag_rotation_speed)
 		bag.rotation_degrees.x = lerp(bag.rotation_degrees.x, 0.0, delta * bag_rotation_speed)
+		return
+	
+	var vp: Viewport = get_viewport()
+	var vp_size: Vector2 = Vector2(vp.size)
+	var mouse_pos: Vector2 = vp.get_mouse_position()
+	
+	var nx: float = (mouse_pos.x / vp_size.x) * 2.0 - 1.0
+	var ny: float = (mouse_pos.y / vp_size.y) * 2.0 - 1.0
+	
+	var sensitivity: float = 2.0  
+	
+	var target_y_deg: float = clamp(-nx * (sensitivity * 1.5) * bag_max_rotation_degrees, 
+			-bag_max_rotation_degrees, bag_max_rotation_degrees)
+	
+	var target_x_deg: float = clamp(-ny * sensitivity * bag_max_rotation_degrees, 
+			-bag_max_rotation_degrees, bag_max_rotation_degrees)
+	
+	bag.rotation_degrees.y = lerp(bag.rotation_degrees.y, target_y_deg, delta * bag_rotation_speed)
+	bag.rotation_degrees.x = lerp(bag.rotation_degrees.x, target_x_deg, delta * bag_rotation_speed)
