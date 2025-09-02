@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://clapenqe43n2g"]
+[gd_scene load_steps=10 format=3 uid="uid://clapenqe43n2g"]
 
 [ext_resource type="Texture2D" uid="uid://kbevcyv5t7g7" path="res://Images/CheckeredPattern.png" id="1_2q4tk"]
-[ext_resource type="PackedScene" uid="uid://d2oyjj2d3bk2b" path="res://Scenes/Player.tscn" id="1_idj7w"]
+[ext_resource type="PackedScene" uid="uid://d2oyjj2d3bk2b" path="res://Scenes/Player/Player.tscn" id="1_idj7w"]
 [ext_resource type="PackedScene" uid="uid://yro3yrnh0ajp" path="res://Scenes/MonsterNPC.tscn" id="2_kln2b"]
+[ext_resource type="PackedScene" uid="uid://sngm0uqfkv06" path="res://Scenes/TestRoom.tscn" id="4_rgh2o"]
 
 [sub_resource type="Environment" id="Environment_76we7"]
 sdfgi_enabled = true
@@ -11,19 +12,20 @@ sdfgi_cascades = 3
 sdfgi_min_cell_size = 14.8525
 sdfgi_energy = 0.05
 glow_enabled = true
-glow_intensity = 4.22
-glow_strength = 0.26
+glow_intensity = 0.7
+glow_strength = 0.6
 glow_bloom = 1.0
-glow_map_strength = 0.65
-fog_light_color = Color(0.654902, 0.654902, 0.654902, 1)
-fog_light_energy = 0.32
-fog_density = 0.005
-volumetric_fog_enabled = true
+glow_blend_mode = 0
+glow_hdr_threshold = 1.2
+glow_map_strength = 1.0
+fog_enabled = true
+fog_light_color = Color(0.273873, 0.273873, 0.273873, 1)
+fog_light_energy = 0.12
+fog_density = 0.02
 volumetric_fog_density = 0.0184
 volumetric_fog_albedo = Color(0.654232, 0.654232, 0.654232, 1)
 volumetric_fog_emission_energy = 0.0
 volumetric_fog_length = 1024.0
-adjustment_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iydfj"]
 shading_mode = 0
@@ -53,13 +55,14 @@ albedo_color = Color(0.462291, 0.462291, 0.462291, 1)
 environment = SubResource("Environment_76we7")
 
 [node name="Player" parent="." instance=ExtResource("1_idj7w")]
-transform = Transform3D(-0.307624, 0, 0.394166, 0, 0.5, 0, -0.394166, 0, -0.307624, 5.01729, 1.20762, -5.2618)
+transform = Transform3D(-0.307624, 0, 0.394166, 0, 0.5, 0, -0.394166, 0, -0.307624, 179.479, 105.853, -139.356)
 
 [node name="MonsterNPC" parent="." node_paths=PackedStringArray("target") instance=ExtResource("2_kln2b")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.493229, 0)
 target = NodePath("../Player")
 
 [node name="Map" type="Node3D" parent="."]
+visible = false
 
 [node name="Lights" type="Node3D" parent="Map"]
 
@@ -238,3 +241,5 @@ visible = false
 use_collision = true
 size = Vector3(30, 0.403, 30)
 material = SubResource("StandardMaterial3D_d0fcn")
+
+[node name="TestRoom" parent="." instance=ExtResource("4_rgh2o")]

@@ -1,0 +1,91 @@
+[gd_scene load_steps=9 format=3 uid="uid://bcqaucxjnurud"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_aqqec"]
+size = Vector3(0.596344, 0.617554, 0.196457)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kksag"]
+size = Vector3(0.570312, 0.611755, 0.148926)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kksag"]
+size = Vector3(0.765236, 0.983582, 0.351646)
+
+[sub_resource type="BoxMesh" id="BoxMesh_aqqec"]
+size = Vector3(0.75, 0.967041, 0.334961)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cknj3"]
+size = Vector3(0.133667, 0.513672, 0.387054)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cknj3"]
+size = Vector3(0.125, 0.5, 0.370117)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xe31j"]
+size = Vector3(0.133667, 0.513672, 0.385826)
+
+[sub_resource type="BoxMesh" id="BoxMesh_xe31j"]
+size = Vector3(0.125, 0.5, 0.379395)
+
+[node name="Bag" type="Node3D"]
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.108521, -0.20752)
+visible = false
+size = Vector3(0.75, 0.967041, 0.334961)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.167339, 0.0550915)
+size = Vector3(0.75, 0.805115, 0.227539)
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00366211, -0.0691223, 0.247988)
+visible = false
+size = Vector3(0.570312, 0.611755, 0.148926)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.432237, 0, -0.0649414)
+visible = false
+size = Vector3(0.125, 0.5, 0.370117)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.434972, 0, -0.0603027)
+visible = false
+size = Vector3(0.125, 0.5, 0.379395)
+
+[node name="CompartmentSections" type="Node3D" parent="."]
+
+[node name="FontCompartment" type="Area3D" parent="CompartmentSections"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0516316, 0.239837)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CompartmentSections/FontCompartment"]
+shape = SubResource("BoxShape3D_aqqec")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CompartmentSections/FontCompartment"]
+mesh = SubResource("BoxMesh_kksag")
+
+[node name="BackCompartment" type="Area3D" parent="CompartmentSections"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -0.221)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CompartmentSections/BackCompartment"]
+shape = SubResource("BoxShape3D_kksag")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CompartmentSections/BackCompartment"]
+mesh = SubResource("BoxMesh_aqqec")
+
+[node name="RightCompartment" type="Area3D" parent="CompartmentSections"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.407218, 0.0887502, -0.108422)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CompartmentSections/RightCompartment"]
+shape = SubResource("BoxShape3D_cknj3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CompartmentSections/RightCompartment"]
+mesh = SubResource("BoxMesh_cknj3")
+
+[node name="LeftCompartment" type="Area3D" parent="CompartmentSections"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43327, 0.100008, -0.0493144)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CompartmentSections/LeftCompartment"]
+shape = SubResource("BoxShape3D_xe31j")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CompartmentSections/LeftCompartment"]
+mesh = SubResource("BoxMesh_xe31j")

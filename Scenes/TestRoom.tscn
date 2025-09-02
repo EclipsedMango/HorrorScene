@@ -1,60 +1,183 @@
-[gd_scene load_steps=5 format=3 uid="uid://sngm0uqfkv06"]
+[gd_scene load_steps=25 format=3 uid="uid://sngm0uqfkv06"]
 
-[ext_resource type="Texture2D" uid="uid://kbevcyv5t7g7" path="res://Images/CheckeredPattern.png" id="1_nqjuk"]
+[ext_resource type="Texture2D" uid="uid://c8iuio6e3m5ki" path="res://addons/terrain_3d/assets/rock030_alb_ht.dds" id="1_mdeio"]
+[ext_resource type="Texture2D" uid="uid://c2e3c2kwsxtro" path="res://Images/Foliage/Grass-Texture-PNG-Cutout.png" id="2_a1s1a"]
+[ext_resource type="Texture2D" uid="uid://dh13nk8rlx38f" path="res://addons/terrain_3d/assets/rock030_nrm_rgh.dds" id="2_q6l42"]
+[ext_resource type="Texture2D" uid="uid://bomis4c3by0cb" path="res://addons/terrain_3d/assets/grass001_alb_ht.dds" id="3_wtyfb"]
+[ext_resource type="Texture2D" uid="uid://dhi5wj7a81ghf" path="res://addons/terrain_3d/assets/Grass001_nrm_rgh.dds" id="4_ppqey"]
+[ext_resource type="Texture2D" uid="uid://n0oc1fd0co0x" path="res://addons/terrain_3d/assets/grass_path_2_alb_ht.dds" id="5_frn6d"]
+[ext_resource type="Texture2D" uid="uid://kbevcyv5t7g7" path="res://Images/CheckeredPattern.png" id="5_ppqey"]
+[ext_resource type="Texture2D" uid="uid://lnjvlqet6aal" path="res://addons/terrain_3d/assets/grass_path_2_nrm_rgh.dds" id="6_qwyu3"]
+[ext_resource type="Texture2D" uid="uid://cf37nkcoc770c" path="res://addons/terrain_3d/assets/rocky_trail_1k_alb_ht.dds" id="7_a1s1a"]
+[ext_resource type="Texture2D" uid="uid://bin0ou46rokmg" path="res://addons/terrain_3d/assets/rocky_trail_1k_nrm_rgh.dds" id="8_junhl"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mdeio"]
+[sub_resource type="Gradient" id="Gradient_wtyfb"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ppqey"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qqxsu"]
+seamless = true
+color_ramp = SubResource("Gradient_wtyfb")
+noise = SubResource("FastNoiseLite_ppqey")
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_kqsor"]
+_shader_parameters = {
+&"auto_base_texture": 0,
+&"auto_height_reduction": 0.1,
+&"auto_overlay_texture": 1,
+&"auto_slope": 1.0,
+&"bias_distance": 512.0,
+&"blend_sharpness": 0.5,
+&"depth_blur": 0.0,
+&"enable_macro_variation": true,
+&"enable_projection": true,
+&"flat_terrain_normals": false,
+&"macro_variation1": Color(1, 1, 1, 1),
+&"macro_variation2": Color(1, 1, 1, 1),
+&"macro_variation_slope": 0.333,
+&"mipmap_bias": 1.0,
+&"noise1_angle": 0.0,
+&"noise1_offset": Vector2(0.5, 0.5),
+&"noise1_scale": 0.04,
+&"noise2_scale": 0.076,
+&"noise_texture": SubResource("NoiseTexture2D_qqxsu"),
+&"projection_threshold": 0.8
+}
+auto_shader = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_frn6d"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("2_a1s1a")
+backlight_enabled = true
+backlight = Color(0.5, 0.5, 0.5, 1)
+distance_fade_mode = 1
+distance_fade_min_distance = 128.0
+distance_fade_max_distance = 96.0
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_frn6d"]
+name = "GrassModel"
+generated_type = 1
+height_offset = 0.5
+material_override = SubResource("StandardMaterial3D_frn6d")
+generated_size = Vector2(0.5, 0.5)
+last_lod = 0
+last_shadow_lod = 0
+lod0_range = 128.0
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_qwyu3"]
+name = "rock030_alb_ht"
+albedo_texture = ExtResource("1_mdeio")
+normal_texture = ExtResource("2_q6l42")
+uv_scale = 1.039
+detiling_rotation = 0.341
+detiling_shift = 0.197
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_qqxsu"]
+name = "grass001_alb_ht"
+id = 1
+albedo_texture = ExtResource("3_wtyfb")
+normal_texture = ExtResource("4_ppqey")
+uv_scale = 0.75
+detiling_rotation = 0.213
+detiling_shift = 0.51
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_6m3id"]
+name = "grass_path_2_alb_ht"
+id = 2
+albedo_texture = ExtResource("5_frn6d")
+normal_texture = ExtResource("6_qwyu3")
+uv_scale = 1.0
+detiling_rotation = 0.518
+detiling_shift = 0.667
+
+[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_g43yt"]
+name = "rocky_trail_1k_alb_ht"
+id = 3
+albedo_texture = ExtResource("7_a1s1a")
+normal_texture = ExtResource("8_junhl")
+uv_scale = 1.0
+detiling_rotation = 0.735
+detiling_shift = 0.727
+
+[sub_resource type="Terrain3DAssets" id="Terrain3DAssets_a1s1a"]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_frn6d")])
+texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_qwyu3"), SubResource("Terrain3DTextureAsset_qqxsu"), SubResource("Terrain3DTextureAsset_6m3id"), SubResource("Terrain3DTextureAsset_g43yt")])
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qqxsu"]
 albedo_color = Color(0.408329, 0.408329, 0.408329, 1)
-albedo_texture = ExtResource("1_nqjuk")
-uv1_scale = Vector3(10, 10, 10)
+albedo_texture = ExtResource("5_ppqey")
+uv1_scale = Vector3(20, 20, 20)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q6l42"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kqsor"]
 albedo_color = Color(0.462291, 0.462291, 0.462291, 1)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_nqjuk"]
-size = Vector3(8.05823, 4.2291, 8.02026)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qwyu3"]
+shading_mode = 0
 
 [node name="TestRoom" type="Node3D"]
 
-[node name="Bounds" type="Node3D" parent="."]
+[node name="Terrain3D" type="Terrain3D" parent="."]
+data_directory = "res://Terrain/DataDir"
+material = SubResource("Terrain3DMaterial_kqsor")
+assets = SubResource("Terrain3DAssets_a1s1a")
+top_level = true
+metadata/_edit_lock_ = true
 
-[node name="Ground" type="CSGBox3D" parent="Bounds"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.144961, 0)
+[node name="ReferenceScaleBuilding" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 140, 143.702)
+
+[node name="Ground" type="CSGBox3D" parent="ReferenceScaleBuilding"]
 use_collision = true
-size = Vector3(8, 0.299922, 8)
-material = SubResource("StandardMaterial3D_mdeio")
+size = Vector3(30, 0.01, 30)
+material = SubResource("StandardMaterial3D_qqxsu")
 
-[node name="WallNorth" type="CSGBox3D" parent="Bounds"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0334015, 1.75, -3.87541)
+[node name="OuterWalls" type="Node3D" parent="ReferenceScaleBuilding"]
+
+[node name="WallNorth" type="CSGBox3D" parent="ReferenceScaleBuilding/OuterWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.065485, 1.75, -14.9377)
 use_collision = true
-size = Vector3(8.19661, 3.5, 0.233862)
-material = SubResource("StandardMaterial3D_q6l42")
+size = Vector3(30.7399, 3.5, 0.401563)
+material = SubResource("StandardMaterial3D_kqsor")
 
-[node name="WallNorth2" type="CSGBox3D" parent="Bounds"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0283847, 1.75, 3.86538)
+[node name="WallEast" type="CSGBox3D" parent="ReferenceScaleBuilding/OuterWalls"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 14.9856, 1.75, 0.00624466)
 use_collision = true
-size = Vector3(8.07304, 3.5, 0.233862)
-material = SubResource("StandardMaterial3D_q6l42")
+size = Vector3(30.3736, 3.5, 0.317578)
+material = SubResource("StandardMaterial3D_kqsor")
 
-[node name="WallNorth3" type="CSGBox3D" parent="Bounds"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -3.88667, 1.75, 0.0687072)
+[node name="WallSouth" type="CSGBox3D" parent="ReferenceScaleBuilding/OuterWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0850415, 1.75, 14.9998)
 use_collision = true
-size = Vector3(8.07304, 3.5, 0.233862)
-material = SubResource("StandardMaterial3D_q6l42")
+size = Vector3(31.0912, 3.5, 0.356519)
+material = SubResource("StandardMaterial3D_kqsor")
 
-[node name="WallNorth4" type="CSGBox3D" parent="Bounds"]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 3.9062, 1.75, 0.0687072)
+[node name="WallWest" type="CSGBox3D" parent="ReferenceScaleBuilding/OuterWalls"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -15.0862, 1.75, 0.192703)
 use_collision = true
-size = Vector3(8.07304, 3.5, 0.233862)
-material = SubResource("StandardMaterial3D_q6l42")
+size = Vector3(30.9047, 3.5, 0.423535)
+material = SubResource("StandardMaterial3D_kqsor")
 
-[node name="Roof" type="CSGBox3D" parent="Bounds"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.59048, 0)
-use_collision = true
-size = Vector3(8, 0.191, 8)
-material = SubResource("StandardMaterial3D_q6l42")
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 176.912, 101.837, -107.756)
+light_energy = 2.449
+omni_range = 5.98479
 
-[node name="RoomDetectionArea" type="Area3D" parent="."]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RoomDetectionArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0188599, 1.61455, 0.00939941)
-shape = SubResource("BoxShape3D_nqjuk")
+[node name="CSGSphere3D" type="CSGSphere3D" parent="OmniLight3D"]
+radius = 0.143059
+material = SubResource("StandardMaterial3D_qwyu3")
