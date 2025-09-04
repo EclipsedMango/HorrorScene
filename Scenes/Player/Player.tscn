@@ -124,7 +124,7 @@ shadow_blur = 5.545
 distance_fade_begin = 2.0
 distance_fade_shadow = 1204.84
 distance_fade_length = 745.73
-spot_range = 60.0
+spot_range = 15.0
 spot_angle = 41.918
 spot_angle_attenuation = 4.2871
 

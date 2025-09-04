@@ -31,7 +31,7 @@ void vertex() {
 	UV = UV * uv1_scale.xy + uv1_offset.xy;
 
 	if (VERTEX.y > 0.5) {
-		VERTEX.x = VERTEX.x + (sin(TIME * 1.5) * 0.2);
+		VERTEX.x = VERTEX.x + (sin(TIME * 1.5) * 0.1);
 	}
 }
 

@@ -11,7 +11,7 @@ func exit(agent: Agent) -> void:
 
 func update(agent: Agent, delta_time: float) -> void:
 	if agent.is_path_complete():
-		var point: Vector3 = Vector3(randf_range(-15, 15), 0, randf_range(-15, 15))
+		var point: Vector3 = Vector3(randf_range(-250, 250), 0, randf_range(-250, 250))
 		agent.go_to_point(point)
 
 
