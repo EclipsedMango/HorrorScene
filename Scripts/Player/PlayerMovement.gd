@@ -43,7 +43,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("escape"):
+	if Input.is_action_just_pressed("e"):
 		inventory_open = !inventory_open
 		
 		if inventory_open:

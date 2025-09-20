@@ -13,20 +13,19 @@ const LOOK_LIMIT: float = PI / 2
 @onready var player_torch: SpotLight3D = %PlayerTorch
 @onready var blur_cast: RayCast3D = $"../../BlurCast"
 
+@onready var start_pos: Vector3 = position
+
+# Camera settings (Gets defined in _ready)
 var mouse_sensitivity: float
 var zoom_max: float
 var zoom_min: float
 var sprinting_fov_amount: float
-
-var current_fov: float = 0
+var current_fov: float
 
 var wanted_dir: Vector2 = Vector2.ZERO
 var previous_rotation: Vector3 = Vector3.ZERO
 
-var lerp_speed: float = 10
-
-var noise: Noise = FastNoiseLite.new()
-
+var cam_offset: Vector3 = Vector3.ZERO
 
 func _ready():
 	# Set player defined variables.
@@ -37,12 +36,10 @@ func _ready():
 	
 	current_fov = fov
 	player_torch.visible = false
-	
-	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
 
 
 func _physics_process(delta: float) -> void:
-	
+	var time_elapsed: float = Time.get_ticks_usec() * 0.000001
 	
 	if Input.is_action_just_pressed("f"):
 		player_torch.visible = !player_torch.visible
@@ -59,6 +56,12 @@ func _physics_process(delta: float) -> void:
 	rotation.x = lerp_angle(rotation.x, wanted_dir.y, delta * 15.0)
 	
 	# TODO: add realistic camera shake.
+	if player_body.current_state == player_body.State.WALKING:
+		var freq: float = 8.0
+		var amp: float = 0.03
+		cam_offset = cam_offset.move_toward(_handle_camera_bobbing(time_elapsed, freq, amp), 0.25 * delta)
+	else:
+		cam_offset = cam_offset.move_toward(Vector3.ZERO, 0.25 * delta)
 	
 	# Adds small delay between mouse movement and camera reacting
 	var current_rotation: Vector3 = Vector3(rotation.x, player_body.rotation.y, rotation.z)
@@ -66,6 +69,8 @@ func _physics_process(delta: float) -> void:
 	get_tree().create_timer(0.1).timeout.connect(func(): player_torch.global_rotation = current_rotation)
 	
 	_handle_blur(delta)
+	
+	position = cam_offset + start_pos
 
 
 func _input(event: InputEvent) -> void:
@@ -76,6 +81,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _handle_blur(delta: float) -> void:
+	var lerp_speed: float = 10
 	blur_cast.target_position.z = blur_range
 	
 	if blur_cast.is_colliding():
@@ -89,3 +95,10 @@ func _handle_blur(delta: float) -> void:
 	else:
 		attributes.dof_blur_far_distance = lerpf(attributes.dof_blur_far_distance, blur_far_max, delta * lerp_speed)
 		attributes.dof_blur_near_distance = lerpf(attributes.dof_blur_near_distance, blur_near_max, delta * lerp_speed)
+
+
+func _handle_camera_bobbing(time_elapsed: float, freq: float, amp: float) -> Vector3:
+	var offset: Vector3 = Vector3.ZERO
+	offset.x = (sin(time_elapsed) * amp) + (sin((time_elapsed + 0.5) * (freq)) * 0.025)
+	offset.y = (sin(time_elapsed * freq) * amp) + (sin((time_elapsed + 0.5) * (freq * 2)) * 0.025)
+	return offset

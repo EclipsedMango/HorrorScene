@@ -6,11 +6,17 @@
 [ext_resource type="PackedScene" uid="uid://sngm0uqfkv06" path="res://Scenes/Terrain/TestRoom.tscn" id="4_rgh2o"]
 
 [sub_resource type="Environment" id="Environment_76we7"]
-sdfgi_enabled = true
+ambient_light_source = 1
+ambient_light_energy = 0.0
+tonemap_mode = 2
+tonemap_exposure = 0.5
+tonemap_white = 10.0
 sdfgi_use_occlusion = true
 sdfgi_cascades = 3
 sdfgi_min_cell_size = 14.8525
-sdfgi_energy = 0.05
+sdfgi_cascade0_distance = 950.56
+sdfgi_max_distance = 7604.48
+sdfgi_energy = 0.0
 glow_enabled = true
 glow_intensity = 0.7
 glow_strength = 0.6
@@ -55,7 +61,7 @@ albedo_color = Color(0.462291, 0.462291, 0.462291, 1)
 environment = SubResource("Environment_76we7")
 
 [node name="Player" parent="." instance=ExtResource("1_idj7w")]
-transform = Transform3D(-0.307624, 0, 0.394166, 0, 0.5, 0, -0.394166, 0, -0.307624, 179.479, 105.853, -139.356)
+transform = Transform3D(-0.307624, 0, 0.394166, 0, 0.5, 0, -0.394166, 0, -0.307624, 187.193, 99.2447, -116.548)
 max_stamina = 100.0
 
 [node name="MonsterNPC" parent="." node_paths=PackedStringArray("target") instance=ExtResource("2_kln2b")]

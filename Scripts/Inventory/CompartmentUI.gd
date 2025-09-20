@@ -1,6 +1,6 @@
 class_name CompartmentUI extends GridContainer
 
-const SLOT_UI = preload("res://Scenes/Player/SlotUI.tscn")
+const SLOT_UI = preload("res://Scenes/Player/Inventory/SlotUI.tscn")
 
 # Compartment size.
 @export var compartment_size: Vector2i = Vector2i(5, 5)

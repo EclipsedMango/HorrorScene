@@ -26,41 +26,18 @@ size = Vector3(0.125, 0.5, 0.379395)
 
 [node name="Bag" type="Node3D"]
 
-[node name="Model" type="Node3D" parent="."]
-
-[node name="CSGBox3D" type="CSGBox3D" parent="Model"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.108521, -0.20752)
-visible = false
-size = Vector3(0.75, 0.967041, 0.334961)
-
-[node name="CSGBox3D4" type="CSGBox3D" parent="Model"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.167339, 0.0550915)
-size = Vector3(0.75, 0.805115, 0.227539)
-
-[node name="CSGBox3D5" type="CSGBox3D" parent="Model"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00366211, -0.0691223, 0.247988)
-visible = false
-size = Vector3(0.570312, 0.611755, 0.148926)
-
-[node name="CSGBox3D2" type="CSGBox3D" parent="Model"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.432237, 0, -0.0649414)
-visible = false
-size = Vector3(0.125, 0.5, 0.370117)
-
-[node name="CSGBox3D3" type="CSGBox3D" parent="Model"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.434972, 0, -0.0603027)
-visible = false
-size = Vector3(0.125, 0.5, 0.379395)
-
 [node name="CompartmentSections" type="Node3D" parent="."]
 
-[node name="FontCompartment" type="Area3D" parent="CompartmentSections"]
+[node name="FrontCompartment" type="Area3D" parent="CompartmentSections"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0516316, 0.239837)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CompartmentSections/FontCompartment"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CompartmentSections/FrontCompartment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0122063)
 shape = SubResource("BoxShape3D_aqqec")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CompartmentSections/FontCompartment"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CompartmentSections/FrontCompartment"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0122063)
+layers = 3
 mesh = SubResource("BoxMesh_kksag")
 
 [node name="BackCompartment" type="Area3D" parent="CompartmentSections"]
@@ -89,3 +66,8 @@ shape = SubResource("BoxShape3D_xe31j")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CompartmentSections/LeftCompartment"]
 mesh = SubResource("BoxMesh_xe31j")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.815, 0, 0, 0, 0.63, 0, 0.169717, 0.050351)
+mesh = SubResource("BoxMesh_aqqec")
+skeleton = NodePath("../CompartmentSections/BackCompartment")

@@ -83,6 +83,8 @@ void fragment() {
     // We calculate the final texture coordinate we need to sample from.
     //----------------------------------------------------------
 
+	// IF YOU CHANGE A VALUE RELATING TO FISHEYE, CHANGE IT IN THE BagCamera.gd FILE TO REFLECT THOSE CHANGES.
+
     // --- 1a. Fisheye Calculation ---
     vec2 fisheye_uv;
     vec2 resolution = 1.0 / SCREEN_PIXEL_SIZE;

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://d2oyjj2d3bk2b"]
+[gd_scene load_steps=25 format=3 uid="uid://d2oyjj2d3bk2b"]
 
 [ext_resource type="Script" uid="uid://dmtkdwpne7rwi" path="res://Scripts/Player/PlayerMovement.gd" id="1_dewec"]
 [ext_resource type="Script" uid="uid://dyi3vlfqm4bdl" path="res://Scripts/Player/PlayerCamera.gd" id="2_glx4g"]
@@ -8,9 +8,11 @@
 [ext_resource type="Shader" uid="uid://dcjol5wn7jipg" path="res://Shaders/Player/PostProcess.gdshader" id="6_miouo"]
 [ext_resource type="Texture2D" uid="uid://chw2sl3s8qj2h" path="res://Images/icon.svg" id="7_52ee3"]
 [ext_resource type="Texture2D" uid="uid://kbevcyv5t7g7" path="res://Images/CheckeredPattern.png" id="8_bhhdu"]
-[ext_resource type="PackedScene" uid="uid://bcqaucxjnurud" path="res://Scenes/Player/Bag.tscn" id="9_megsn"]
+[ext_resource type="PackedScene" uid="uid://bcqaucxjnurud" path="res://Scenes/Player/Inventory/Bag.tscn" id="9_megsn"]
 [ext_resource type="Script" uid="uid://bqp2ddovbbyse" path="res://Scripts/Inventory/Bag/BagCamera.gd" id="10_ksbbd"]
 [ext_resource type="Script" uid="uid://frsbljmuu5p5" path="res://Scripts/Inventory/Bag/BagViewport.gd" id="10_yoq75"]
+[ext_resource type="Shader" uid="uid://bdam1gj7xpr86" path="res://Shaders/Bag/HightLight.gdshader" id="12_i5acl"]
+[ext_resource type="Script" uid="uid://fcy6n0ng8vk3" path="res://Scripts/SelectionViewport.gd" id="13_epg6k"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ksbbd"]
 
@@ -95,6 +97,11 @@ metadata/_custom_type_script = "uid://dawk1dcnjggnh"
 
 [sub_resource type="World3D" id="World3D_yoq75"]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0u84n"]
+shader = ExtResource("12_i5acl")
+shader_parameter/line_color = Vector3(0.9, 0.6, 0.1)
+shader_parameter/line_thickness = 2.0
+
 [node name="Player" type="CharacterBody3D"]
 transform = Transform3D(0.499999, 0, 0, 0, 0.5, 0, 0, 0, 0.499999, 0, 0, 0)
 script = ExtResource("1_dewec")
@@ -110,6 +117,7 @@ shape = SubResource("CapsuleShape3D_wwrpy")
 [node name="Camera" type="Camera3D" parent="Head"]
 unique_name_in_owner = true
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.566768, 0)
+cull_mask = 1048573
 attributes = SubResource("CameraAttributesPractical_dewec")
 fov = 85.0
 script = ExtResource("2_glx4g")
@@ -176,22 +184,127 @@ grow_vertical = 2
 unique_name_in_owner = true
 layer = 2
 
-[node name="Compartment" type="GridContainer" parent="UI/Inventory/Inventory"]
+[node name="LeftCompartment" type="Control" parent="UI/Inventory/Inventory"]
+layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -306.0
-offset_top = -306.0
-offset_right = 306.0
-offset_bottom = 306.0
 grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+
+[node name="Compartment1" type="GridContainer" parent="UI/Inventory/Inventory/LeftCompartment"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -618.0
+offset_top = -309.0
+offset_bottom = 309.0
+grow_horizontal = 0
 grow_vertical = 2
 theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 6
+columns = 4
 script = ExtResource("5_5ixxa")
 compartment_size = Vector2i(4, 4)
+test_item = SubResource("Resource_bhhdu")
+test_item2 = SubResource("Resource_megsn")
+
+[node name="RightCompartment" type="Control" parent="UI/Inventory/Inventory"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+
+[node name="Compartment2" type="GridContainer" parent="UI/Inventory/Inventory/RightCompartment"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -309.0
+offset_right = 618.0
+offset_bottom = 309.0
+grow_vertical = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 4
+script = ExtResource("5_5ixxa")
+compartment_size = Vector2i(4, 4)
+test_item = SubResource("Resource_bhhdu")
+test_item2 = SubResource("Resource_megsn")
+
+[node name="BackCompartment" type="Control" parent="UI/Inventory/Inventory"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Compartment3" type="GridContainer" parent="UI/Inventory/Inventory/BackCompartment"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -309.0
+offset_top = -498.0
+offset_right = 309.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 4
+script = ExtResource("5_5ixxa")
+compartment_size = Vector2i(5, 3)
+test_item = SubResource("Resource_bhhdu")
+test_item2 = SubResource("Resource_megsn")
+
+[node name="FrontCompartment" type="Control" parent="UI/Inventory/Inventory"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Compartment4" type="GridContainer" parent="UI/Inventory/Inventory/FrontCompartment"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -309.0
+offset_right = 309.0
+offset_bottom = 513.0
+grow_horizontal = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 4
+script = ExtResource("5_5ixxa")
+compartment_size = Vector2i(4, 3)
 test_item = SubResource("Resource_bhhdu")
 test_item2 = SubResource("Resource_megsn")
 
@@ -218,7 +331,6 @@ grow_vertical = 2
 
 [node name="SubViewport" type="SubViewport" parent="UI/BagViewport"]
 unique_name_in_owner = true
-own_world_3d = true
 world_3d = SubResource("World3D_yoq75")
 transparent_bg = true
 handle_input_locally = false
@@ -227,16 +339,16 @@ script = ExtResource("10_yoq75")
 
 [node name="Camera3D" type="Camera3D" parent="UI/BagViewport/SubViewport"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -23.8734, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28215, 0)
 script = ExtResource("10_ksbbd")
 
 [node name="Bag" parent="UI/BagViewport/SubViewport/Camera3D" instance=ExtResource("9_megsn")]
 unique_name_in_owner = true
-transform = Transform3D(0.499999, 0, 0, 0, 0.5, 0, 0, 0, 0.499999, 0, -0.0630875, -1.21388)
-visible = false
+transform = Transform3D(0.499999, 0, 0, 0, 0.5, 0, 0, 0, 0.499999, 0, -0.065, -1.2)
 
 [node name="BagTorch" type="SpotLight3D" parent="UI/BagViewport/SubViewport/Camera3D"]
 unique_name_in_owner = true
+layers = 3
 light_color = Color(1, 1, 0.839216, 1)
 light_volumetric_fog_energy = 0.0
 shadow_enabled = true
@@ -247,3 +359,24 @@ distance_fade_length = 745.73
 spot_range = 7.0
 spot_angle = 41.918
 spot_angle_attenuation = 4.2871
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="UI"]
+material = SubResource("ShaderMaterial_0u84n")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("13_epg6k")
+
+[node name="OutlineViewport" type="SubViewport" parent="UI/SubViewportContainer"]
+world_3d = SubResource("World3D_yoq75")
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+script = ExtResource("10_yoq75")
+
+[node name="Camera" type="Camera3D" parent="UI/SubViewportContainer/OutlineViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.282, 0)
+cull_mask = 2
